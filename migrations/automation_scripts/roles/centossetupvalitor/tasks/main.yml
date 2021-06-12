@@ -1,0 +1,39 @@
+---
+# tasks file for setupvalidator
+  - name: Install rhpython36
+    yum:
+      name:
+        - "@development"
+        - python3
+      state: present
+    ignore_errors: yes
+
+
+
+  - name: ansible create directory Linux_PreWig_Validator
+    file:
+      path: /home/cloudxmigration/Linux_PreWig_Validator
+      state: directory
+
+  - name: Copy Linux Validation Script to remote machine
+    copy:
+      src: templates/Linux_WIGs_Pre-Validation.zip
+      dest: /home/cloudxmigration/Linux_WIGs_Pre-Validation.zip
+      owner: cloudxmigration
+      group: root
+      mode: '0644'
+
+  - name: Extract Linux_WIGs_Pre-Validation.zip into ~/Linux_PreWig_Validator
+    unarchive:
+      src: /home/cloudxmigration/Linux_WIGs_Pre-Validation.zip
+      dest: /home/cloudxmigration/Linux_PreWig_Validator
+      remote_src: yes
+  - name: Run the validator
+    command: "{{item}}"
+    with_items:
+     - chmod 755 /home/cloudxmigration/Linux_PreWig_Validator/pre-wigs-validator
+    become: True
+  - name: Run Pip3 Install
+    shell: |
+      pip3 install /home/cloudxmigration/Linux_PreWig_Validator
+    become_user: root

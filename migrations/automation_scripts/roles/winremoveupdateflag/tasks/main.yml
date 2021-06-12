@@ -1,0 +1,13 @@
+---
+# tasks file for winremovetrendmicro
+
+
+- name: Remove Upgrade Flag
+  win_shell: |
+    if (Test-Path -Path 'HKLM:\SYSTEM\Setup'){
+    Remove-ItemProperty -Path 'HKLM:\SYSTEM\Setup' -Name 'Upgrade'
+    }
+    if (Test-Path -Path 'HKLM:\SYSTEM\Setup\Upgrade'){
+    Remove-Item -Path 'HKLM:\SYSTEM\Setup\Upgrade' -Recurse
+    }
+  ignore_errors: yes

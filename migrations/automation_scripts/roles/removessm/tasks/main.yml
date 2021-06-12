@@ -1,0 +1,22 @@
+---
+# tasks file for removessm
+  - name: Stop service ssm, if started
+    service:
+      name: amazon-ssm-agent
+      state: stopped
+    ignore_errors: true
+
+  - name: Remove the SSM agent
+    yum:
+     name: amazon-ssm-agent
+     state: absent
+    ignore_errors: true
+
+  - name: Delete SSM related files
+    #become: true
+    command: "{{item}}"
+    with_items:
+      rm -rf /var/lib/amazon/ssm >/dev/null 2>&1
+      rm -rf /var/log/amazon/ssm >/dev/null 2>&1
+      rm -rf /etc/amazon/ssm >/dev/null 2>&1 
+    ignore_errors: true

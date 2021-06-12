@@ -1,0 +1,20 @@
+---
+# tasks file for ansible-prewig/roles/winssmagent
+
+
+- name: stop the CloudWatch Agent service
+  win_service:
+    name: AmazonCloudWatchAgent
+    state: absent
+
+
+- name: Delete old files for cloudagent agent
+  win_file:
+    path: "{{ item }}"
+    state: absent
+  with_items:
+    - C:\ProgramData\Amazon\AmazonCloudWatchAgent
+    - 'C:\Program Files\Amazon\AmazonCloudWatchAgent'
+  ignore_errors: yes
+
+

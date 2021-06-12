@@ -1,0 +1,29 @@
+---
+# tasks file for etcresolv
+#  tasks:
+  - name: Remove immutable
+    #become: true
+    file:
+      path: /etc/resolv.conf
+      attr: -i
+
+  - name: remove old content from resolv.conf
+    #become: true
+    lineinfile:
+      path: /etc/resolv.conf
+      state: absent
+      regexp: "{{ item }}"
+    with_items:
+      - 'nameserver'
+      - 'search'
+
+  - name: Change the content in resolv.conf for AMS
+    #become: true
+    lineinfile:
+      path: /etc/resolv.conf
+      line: "{{ item }}"
+    with_items:
+      - 'search www.exampldomain.com'
+      - 'nameserver 10.XX.XX.XX'
+      - 'nameserver 10.XX.XX.XXX'
+

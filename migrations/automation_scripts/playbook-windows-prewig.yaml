@@ -1,0 +1,29 @@
+---
+- name: Run Prewig Validator
+  hosts: all
+  become_method: runas
+  gather_facts: no
+
+
+  roles:
+#    - {role: 'windisablevbox', tags: 'windisablevbox'}
+    - {role: 'winfixpathvariable', tags: 'winfixpathvariable'}
+    - {role: 'winremovenetlogonregistry', tags: 'winremovenetlogonregistry'}
+    - {role: 'wincheckfirewall', tags: 'wincheckfirewall'}
+#    - {role: 'winremoveveritas', tags: 'winremoveveritas'}
+    - {role: 'winremoveproxy', tags: 'winremoveproxy'}
+#    - {role: 'winadddnssuffix', tags: 'winadddnssuffix'}
+    - {role: 'winremovefromdomain', tags: 'winremovefromdomain'}
+    - {role: 'winchangetimezone', tags: 'winchangetimezone'}
+    - {role: 'winremovetrendmicro', tags: 'winremovetrendmicro'}
+#    - {role: 'winremovesoftware', tags: 'winremovesoftware'}
+#    - {role: 'winstepone', tags: 'winstepone'}
+    - {role: 'windisableadmin', tags: 'windisableadmin'}
+    - {role: 'winremoveawscred', tags: 'winremoveawscred'}
+    - {role: 'winssmagent', tags: 'winssmagent'}
+    - {role: 'winremovecwagent', tags: 'winremovecwagent'}
+    - {role: 'winec2config', tags: 'winec2config'}
+    - {role: 'winremoveupdateflag', tags: 'winremoveupdateflag'}
+#    - {role: 'wininstallpackages', tags: 'wininstallpackages'}
+    - {role: 'winremovenetlogonregistry', tags: 'winremovenetlogonregistry'}
+    - {role: 'winrunvalidator', tags: 'winrunvalidator'}

@@ -1,0 +1,87 @@
+---
+# tasks file for winremovetrendmicro
+
+
+- name: copy the ds_remove batch file
+  win_copy:
+    src: templates/dsa_remove.bat
+    dest: c:\post_migration\dsa_remove.bat
+
+
+- name: Remove Trend Micro
+  win_command: dsa_remove.bat > trend_removal_output.txt
+  args:
+    chdir: c:\post_migration
+    creates: c:\post_migration\trend_removal_output.txt
+  register: repo_code
+  ignore_errors: yes
+
+- name: Rebooting the server
+  win_reboot:
+    reboot_timeout: 1800
+  when: repo_code.changed | bool
+
+- name: Remove Trend Micro from Control Panel if present
+  win_shell: |
+    $env:SEE_MASK_NOZONECHECKS = 1
+    $remove = Get-ChildItem -Path HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall, HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall  |
+    Get-ItemProperty |
+        Where-Object {$_.DisplayName -match "Trend Micro" } |
+            Select-Object -Property DisplayName, UninstallString
+    ForEach ($ver in $remove) {
+       If ($ver.UninstallString) {
+           echo $ver.UninstallString
+           $uninst = $ver.UninstallString
+           echo $uninst
+           & cmd /c $uninst /quiet /norestart
+       }
+    }
+  ignore_errors: true
+
+- name: Remove Cloudamize Agent
+  win_command: msiexec /x CloudamizeAgent.msi /qn
+  args:
+    chdir: c:\cloudamizeagent
+  ignore_errors: yes
+
+- name: Remove TrendMicor and aws-cfn-bootstrap registry entries
+  win_shell: |
+    $trend_uninstall_child = (Get-ChildItem -Recurse HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall | Get-ItemProperty | where { $_.DisplayName -match 'Trend Micro Deep Security'}).PSChildName
+    $trend_installer_child = (Get-ChildItem -Recurse HKLM:\SOFTWARE\Classes\Installer\Products | Get-ItemProperty | where { $_.ProductName -match 'Trend Micro Deep Security Agent'}).PSChildName
+    $cfn_uninstall_child = (Get-ChildItem -Recurse HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall | Get-ItemProperty | where { $_.DisplayName -match 'aws-cfn-boot'}).PSChildName
+    $cfn_installer_child = (Get-ChildItem -Recurse HKLM:\SOFTWARE\Classes\Installer\Products | Get-ItemProperty | where { $_.ProductName -match 'aws-cfn-bootstrap'}).PSChildName
+    if ( $trend_uninstall_child.length -gt 0){
+    echo "It is not null"
+    echo $trend_uninstall_child
+    Remove-Item -Path HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$trend_uninstall_child -Recurse
+    }
+    else{
+    echo "It is null"
+    }
+    if ( $trend_installer_child.length -gt 0){
+    echo "It is not null"
+    echo $trend_installer_child
+    Remove-Item -Path HKLM:\SOFTWARE\Classes\Installer\Products\$trend_installer_child -Recurse
+    }
+    else{
+    echo "It is null"}
+    if ( $cfn_uninstall_child.length -gt 0){
+    echo "It is not null"
+    echo $cfn_uninstall_child
+    Remove-Item -Path HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$cfn_uninstall_child -Recurse
+    }
+    else{
+    echo "It is null"}
+    if ( $cfn_installer_child.length -gt 0){
+    echo "It is not null"
+    echo $cfn_installer_child
+    Remove-Item -Path HKLM:\SOFTWARE\Classes\Installer\Products\$cfn_installer_child -Recurse}
+    else{
+    echo "It is null"}
+    if (Test-Path -Path 'C:\Program Files\Amazon\cfn-bootstrap'){
+    Remove-Item -Path 'C:\Program Files\Amazon\cfn-bootstrap' -Recurse
+    }
+    if (Test-Path -Path 'C:\Program Files (x86)\Amazon\cfn-bootstrap'){
+    Remove-Item -Path 'C:\Program Files (x86)\Amazon\cfn-bootstrap' -Recurse
+    }
+  ignore_errors: yes

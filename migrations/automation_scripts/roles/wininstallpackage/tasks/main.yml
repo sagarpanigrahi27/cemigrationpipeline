@@ -1,0 +1,37 @@
+
+---
+# tasks file for ansible-prewig/roles/wininstallpackages
+
+- name: Unzip ENA driver
+  win_unzip:
+    src: C:\post_migration\AwsEnaNetworkDriver.zip
+    dest: C:\post_migration\AwsEnaNetworkDriver
+    creates: C:\post_migration\AwsEnaNetworkDriver
+
+- name: Install or Update ENA Driver
+  win_shell: |
+    Unblock-File -Path C:\post_migration\AwsEnaNetworkDriver\install.ps1
+    "C:\post_migration\AwsEnaNetworkDriver\install.ps1"
+
+
+- name: Unzip NVMe driver
+  win_unzip:
+    src: C:\post_migration\AWSNVMe.zip
+    dest: C:\post_migration
+    creates: C:\post_migration\AWSNVMe
+
+
+- name: Install or update NMVMe
+  win_shell: |
+     Unblock-File -Path C:\post_migration\AWSNVMe\install.ps1
+     "C:\post_migration\AWSNVMe\install.ps1"
+  ignore_errors: yes
+
+- name: pause execution for 300 seconds
+  pause: 
+    seconds: 300
+
+
+- name: Wait for system to become reachable over WinRM
+  wait_for_connection:
+    timeout: 900

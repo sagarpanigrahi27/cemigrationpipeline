@@ -1,0 +1,60 @@
+---
+# tasks file for ansible-prewig/roles/winssmagent
+
+
+- name: stop the ssm agent service
+  win_service:
+    name: AmazonSSMAgent
+    state: absent
+  ignore_errors: true
+
+- name: Uninstall SSM Agent if installed  
+  win_shell: |
+    $env:SEE_MASK_NOZONECHECKS = 1
+    $remove = Get-ChildItem -Path HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall, HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall  |
+    Get-ItemProperty |
+        Where-Object {$_.DisplayName -match "Amazon SSM Agent" } |
+            Select-Object -Property DisplayName, UninstallString
+    ForEach ($ver in $remove) {
+       If ($ver.UninstallString) {
+           echo $ver.UninstallString
+           $uninst = $ver.UninstallString
+           echo $uninst
+           & cmd /c $uninst /quiet /norestart   
+       }
+    }
+  ignore_errors: true
+
+
+
+#    Start-Process -Wait .\AmazonSSMAgentSetup.exe -ArgumentList "/uninstall /silent" -PassThru
+#  args:
+#    chdir: C:\post_migration
+
+#- name: Wait for 5 seconds
+#  pause:
+#    seconds: 5
+
+- name: Delete old files for SSM agent
+  win_file:
+    path: C:\ProgramData\Amazon\SSM
+    state: absent
+  ignore_errors: yes
+
+
+- name: Delete old files for SSM agent
+  win_file:
+    path: C:\Program Files\Amazon\SSM
+    state: absent
+  ignore_errors: yes
+
+
+
+
+#- name: Install Latest Version of SSM Agent
+#  win_shell: |
+#    $env:SEE_MASK_NOZONECHECKS = 1
+#    Start-Process -Wait .\AmazonSSMAgentSetup.exe -ArgumentList "/install /silent" -PassThru
+#    Remove-Item env:SEE_MASK_NOZONECHECKS
+#  args:
+#    chdir: C:\post_migration

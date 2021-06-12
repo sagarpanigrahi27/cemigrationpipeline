@@ -1,0 +1,42 @@
+---
+# tasks file for ansible-prewig/roles/winssmagent
+
+
+#- name: stop the ssm agent service
+#  win_service:
+#    name: AmazonSSMAgent
+#    state: absent
+#  ignore_errors: true
+
+- name: Uninstall SSM Agent if installed  
+  win_shell: |
+    $env:SEE_MASK_NOZONECHECKS = 1
+    $remove = Get-ChildItem -Path HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall, HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall  |
+    Get-ItemProperty |
+        Where-Object {$_.DisplayName -match "Veritas" } |
+            Select-Object -Property DisplayName, UninstallString
+    ForEach ($ver in $remove) {
+       If ($ver.UninstallString) {
+           # echo $ver.UninstallString
+           $uninst = $ver.UninstallString
+           echo $uninst
+           # & cmd /c runas /user:cloudxmigration $uninst /quiet /norestart   
+       }
+    }
+  register: op
+  ignore_errors: true
+
+- debug:
+    var: op.stdout
+
+#- win_command: "{{ op.stdout }}"
+#  become: yes
+#  become_user: cloudxmigration      
+
+- win_package:
+    path: C:\Windows\Installer\{F16B50F1-A005-4DCD-924C-F4A90D2CF09B}\setup.exe
+    product_id: '{F16B50F1-A005-4DCD-924C-F4A90D2CF09B}'
+    state: absent
+    arguments: /quiet
+#  become: yes
+#  become_user: cloudxmigration  

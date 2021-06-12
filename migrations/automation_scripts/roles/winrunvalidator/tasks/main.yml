@@ -1,0 +1,48 @@
+---
+# tasks file for ansible-prewig/roles/winrunvalidator
+
+- name: Remove any old validator folders
+  win_file:
+    path: C:\post_migration\AWSManagedServices.PreWigs.Validation
+    state: absent
+  ignore_errors: true
+
+- name: Extract prewig validator for windows
+  win_unzip:
+    src: C:\post_migration\AWSManagedServices-PreWigs-Validation.zip
+    dest: C:\post_migration
+    creates: C:\post_migration\AWSManagedServices.PreWigs.Validation
+
+
+- name: Run the Prewig validator
+  win_shell: |
+    Set-ExecutionPolicy -Scope CurrentUser Unrestricted
+    Unblock-File .\AWSManagedServices.PreWigs.Validation.psm1
+    Unblock-File .\AWSManagedServices.PreWigs.Validation.psd1
+    Get-ChildItem '.\Public' -Recurse | Unblock-File
+    Get-ChildItem '.\Private' -Recurse | Unblock-File
+    Import-Module '.\AWSManagedServices.PreWigs.Validation.psm1' -force
+    Invoke-PreWIGsValidation
+  ignore_errors: True
+  args:
+    chdir: C:\post_migration\AWSManagedServices.PreWigs.Validation
+  register: op
+  failed_when: "'Fail' in op.stderr"
+
+- name: Obtain information about sppnp.dll file
+  win_stat:
+    path: C:\windows\system32\sppnp.dll
+  register: file_info
+
+- name: Get product id and product key
+  win_product_facts:
+  register: prodinfo
+
+- debug:
+    var: op.stdout_lines
+
+- debug:
+    var: file_info
+
+- debug:
+    var: prodinfo

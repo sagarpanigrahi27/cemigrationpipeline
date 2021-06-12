@@ -1,0 +1,52 @@
+# tasks file for step one
+
+
+- name: Make sure windows time service is running
+  win_service:
+    name: W32Time
+    start_mode: delayed
+    state: started
+  ignore_errors: true
+
+- name : Reset windows time service to point to EC2 default NTP server
+  win_shell: |
+     w32tm /config /manualpeerlist:169.254.169.123 /syncfromflags:manual /update
+     w32tm /query /configuration
+  become: yes
+  become_user: CloudXMigration
+  register: tnssetting_output
+
+- name : Output of time service command  
+  debug:
+    var: tnssetting_output.stdout
+
+- name: Set timezone to 'Coordinated Universal Time' (UTC)
+  win_timezone:
+    timezone: UTC
+  ignore_errors: true
+
+- name: get current time post timezone setting 
+  win_shell: Get-Date
+  register: time_now
+
+- name: Display Current Time
+  debug: 
+    var: time_now.stdout
+
+- name: Rename Panther folder
+  win_shell: Rename-Item c:\Windows\Panther c:\Windows\Panther_old
+  register: rename_output
+  ignore_errors: true
+
+- name: Display output for renaming panther folder  
+  debug:
+    var: rename_output.stdout
+ 
+
+- name: Remove OEM information from Registry 
+  win_shell: |
+    if (Test-Path -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\OEMInformation'){
+    Remove-Item -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\OEMInformation' -Recurse -Force
+    }
+  ignore_errors: true
+

@@ -1,0 +1,172 @@
+---
+# tasks file for Removeagents for BizCloud servers
+
+- name: Remove McAfee EndPoint Security Threat Prevention from console
+  win_shell: |
+     $d = Get-WmiObject -Class win32_product -Filter "Name like 'McAfee Endpoint Security Threat Prevention%'"
+     $d.uninstall()
+  become: yes
+  become_user: CloudXMigration
+  register: repo_mcafee
+  ignore_errors: true
+
+- name: Output of McAfee EndPoint security threat prevention uninstall
+  debug:
+    var: repo_mcafee.stdout
+
+- name: Remove McAfee EndPoint Security Platform from console
+  win_shell: |
+     $d = Get-WmiObject -Class win32_product -Filter "Name like 'McAfee Endpoint Security Platform%'"
+     $d.uninstall()
+  become: yes
+  become_user: CloudXMigration
+  register: repo_mcafeesp
+  ignore_errors: true
+
+- name: Output of McAfee EndPoint security threat prevention uninstall
+  debug:
+    var: repo_mcafeesp.stdout
+
+
+- name: Remove Cloudamize Agent from console
+  win_shell: |
+     $d = Get-WmiObject -Class win32_product -Filter "Name like 'Cloudamize%'"
+     $d.uninstall()
+  become: yes
+  become_user: CloudXMigration
+  register: repo_cloudamize
+  ignore_errors: true
+
+- name: Output of Remove cloudamize agent uninstall
+  debug:
+    var: repo_cloudamize.stdout
+
+
+
+- name: Remove VMWareTools from registry
+  win_shell: |
+     Unblock-File -Path C:\post_migration\RemoveVMWareTools.ps1
+     C:\post_migration\RemoveVMWareTools.ps1
+  register: vmtools_option
+  become: yes
+  become_user: CloudXMigration
+
+- name: VMWare tools uninstall result
+  debug:
+    var: vmtools_option.stdout
+
+
+- name: Remove McAfee Agent
+  win_shell: |
+     Unblock-File -Path C:\post_migration\RemoveMcAfee.ps1
+     C:\post_migration\RemoveMcAfee.ps1
+  register: repo_code3
+  become: yes
+  become_user: CloudXMigration
+  ignore_errors: true
+
+- name: Output of McAfee agent uninstall
+  debug: 
+    var: repo_code3.stdout
+
+
+- name: Remove McAfee Registry Entries
+  win_shell: |
+    $env:SEE_MASK_NOZONECHECKS = 1
+    $remove = Get-ChildItem -Path HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall, HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall |
+    Get-ItemProperty |
+        Where-Object {$_.DisplayName -match "McAfee" } |
+            Select-Object -Property DisplayName, UninstallString
+    ForEach ($ver in $remove) {
+       If ($ver.UninstallString) {
+           echo $ver.UninstallString
+           $uninst = $ver.UninstallString
+           echo $uninst
+           & cmd /c $uninst /quiet /norestart
+       }
+    }
+  ignore_errors: true
+
+- name: Remove Nimbus Robot  Registry Entries
+
+  win_shell: |
+    $env:SEE_MASK_NOZONECHECKS = 1
+    $remove = Get-ChildItem -Path HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall, HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall |
+    Get-ItemProperty |
+        Where-Object {$_.DisplayName -match "NimbusRobot" } |
+            Select-Object -Property DisplayName, UninstallString
+    ForEach ($ver in $remove) {
+       If ($ver.UninstallString) {
+           echo $ver.UninstallString
+           $uninst = $ver.UninstallString
+           echo $uninst
+           & cmd /c $uninst /quiet /norestart
+       }
+    }
+  ignore_errors: true
+
+- name: Remove Nimsoft Robot  Registry Entries
+
+  win_shell: |
+    $env:SEE_MASK_NOZONECHECKS = 1
+    $remove = Get-ChildItem -Path HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall, HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall |
+    Get-ItemProperty |
+        Where-Object {$_.DisplayName -match "Nimsoft Robot" } |
+            Select-Object -Property DisplayName, UninstallString
+    ForEach ($ver in $remove) {
+       If ($ver.UninstallString) {
+           echo $ver.UninstallString
+           $uninst = $ver.UninstallString
+           echo $uninst
+           & cmd /c $uninst /quiet /norestart
+       }
+    }
+  ignore_errors: true
+
+- name: Remove Cloudamize Registry Entries
+
+  win_shell: |
+    $env:SEE_MASK_NOZONECHECKS = 1
+    $remove = Get-ChildItem -Path HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall, HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall |
+    Get-ItemProperty |
+        Where-Object {$_.DisplayName -match "cloudamize" } |
+            Select-Object -Property DisplayName, UninstallString
+    ForEach ($ver in $remove) {
+       If ($ver.UninstallString) {
+           echo $ver.UninstallString
+           $uninst = $ver.UninstallString
+           echo $uninst
+           & cmd /c $uninst /quiet /norestart
+       }
+    }
+  ignore_errors: true
+
+- name: Remove Unwanted services using registry
+  win_shell: |
+     Unblock-File -Path C:\post_migration\RemoveServices.ps1
+     C:\post_migration\RemoveServices.ps1
+  register: repo_services
+  become: yes
+  become_user: CloudXMigration
+  ignore_errors: true
+
+- name: Output of service remove
+  debug:
+    var: repo_services.stdout
+
+- name: Delete old files for McAfee
+  win_file:
+    path: C:\ProgramData\McAfee
+    state: absent
+  ignore_errors: true
+
+- name: Delete old files for VMWare tools
+  win_file:
+    path: C:\ProgramData\VMWare
+    state: absent
+  ignore_errors: true
+  
+- name: Rebooting the server 
+  win_reboot:
+
+

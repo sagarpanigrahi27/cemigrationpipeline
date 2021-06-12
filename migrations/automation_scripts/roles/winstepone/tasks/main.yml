@@ -1,0 +1,20 @@
+---
+# tasks file for step one
+
+- name: Unjoin , Change Name , Deny TSC and disable firewall
+  win_shell: |
+     Unblock-File -Path C:\post_migration\remove-computer-from-domain.ps1
+     "C:\post_migration\remove-computer-from-domain.ps1"
+  become: yes
+  become_user: CloudXMigration
+
+- name: Remove Trendmicro Deep security agent
+  win_shell: |
+     Unblock-File -Path C:\post_migration\uninstall-software-tools.ps1
+     "C:\post_migration\uninstall-software-tools.ps1"
+  become: yes
+  become_user: CloudXMigration
+
+
+- name: Rebooting the server 
+  win_reboot:

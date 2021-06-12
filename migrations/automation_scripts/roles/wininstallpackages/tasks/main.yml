@@ -1,0 +1,24 @@
+
+---
+# tasks file for ansible-prewig/roles/wininstallpackages
+#- name: Install aws powershell Toolkit
+#  win_package:
+#    path: C:\post_migration\AWSToolsAndSDKForNet_sdk-3.3.779.0_ps-4.0.6.0_tk-1.14.5.0.msi
+#    state: present
+
+- name: Install NVMe,ENA and PV Driver, Server will be rebooted after PV Driver install
+  win_shell: |
+     Unblock-File -Path C:\post_migration\install-software-tools.ps1
+     C:\post_migration\install-software-tools.ps1
+  async: 45
+  poll: 0
+  ignore_errors: yes
+
+- name: pause execution for 300 seconds
+  pause: 
+    seconds: 60
+
+
+- name: Wait for system to become reachable over WinRM
+  wait_for_connection:
+    timeout: 900

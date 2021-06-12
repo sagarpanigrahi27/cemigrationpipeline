@@ -1,0 +1,46 @@
+---
+# tasks file for step one
+
+- name: Remove all proxy settings from IE
+  win_inet_proxy:
+    auto_detect: no
+
+- name: Remove http_proxy environment variable at Machine Level
+  win_environment:
+    state: absent
+    name: http_proxy
+    level: machine
+  register: repo_code1
+
+- name: Remove https_proxy environment variable at Machine Level
+  win_environment:
+    state: absent
+    name: https_proxy
+    level: machine
+  register: repo_code2
+
+- name: Remove http_proxy environment variable at User Level
+  win_environment:
+    state: absent
+    name: http_proxy
+    level: user
+  register: repo_code3
+
+- name: Remove https_proxy environment variable at User Level
+  win_environment:
+    state: absent
+    name: https_proxy
+    level: user
+  register: repo_code4
+
+- name: Remove any proxy settings
+  win_http_proxy:
+    proxy: ''
+    bypass: ''
+  register: repo_code5
+
+
+- name: Rebooting the server
+  win_reboot:
+    reboot_timeout: 1800
+  when: repo_code1.changed or repo_code2.changed or repo_code3.changed or repo_code4.changed or repo_code5.changed

@@ -1,0 +1,9 @@
+---
+# tasks file for ansible-prewig/roles/removeawscred
+- name: Remove aws folder from systemprofile , if present
+  win_file:
+    path: "{{ item }}"
+    state: absent
+  with_items:
+    - C:\Windows\System32\config\systemprofile\aws
+    - C:\Windows\System32\config\systemprofile\.aws

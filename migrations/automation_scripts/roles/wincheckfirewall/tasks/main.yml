@@ -1,0 +1,37 @@
+---
+# tasks file for in disable firewall profiles
+
+- name: Enable Direwall Service and Start it via powershell
+  win_shell: |
+    Set-Service -Name MpsSvc -StartupType Automatic
+    Start-Service -Name "MpsSvc"
+    Set-NetFirewallProfile -Profile Domain,Public,Private -Enabled False
+    netsh advfirewall firewall add rule profile=any name="Allow WinRM HTTPS" dir=in localport=5986 protocol=TCP action=allow
+  ignore_errors: true
+
+
+- name: Check Firewall Service and start it if it's not running
+  win_service:
+    name: MpsSvc
+    start_mode: auto
+    state: started
+  ignore_errors: true
+
+- name: Disable all firewall profiles
+  win_shell: Set-NetFirewallProfile -Profile Domain,Public,Private -Enabled False
+  ignore_errors: true
+
+
+
+- name: Run configureansible for windows
+  win_command: powershell.exe C:\post_migration\ConfigureRemotingForAnsible.ps1 -Verbose
+  args:
+    chdir: C:\post_migration
+  ignore_errors: true
+  register: op2
+
+#- debug:
+   # var: op2
+
+
+ 

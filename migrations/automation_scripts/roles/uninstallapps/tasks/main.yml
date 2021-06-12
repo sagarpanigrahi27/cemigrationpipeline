@@ -1,0 +1,24 @@
+---
+# tasks file for uninstallapps
+
+- name: Uninstall samba and winbind
+  yum:
+    name: 'samba*'
+    state: absent
+  ignore_errors: true
+
+
+- name: Reinstall windbind
+  yum:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - samba-winbind-clients.x86_64
+    - samba-winbind-modules 
+  ignore_errors: true
+
+
+- name: update authconfig
+  shell: authconfig --update
+
+

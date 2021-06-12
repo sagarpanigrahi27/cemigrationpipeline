@@ -1,0 +1,35 @@
+---
+# tasks file for prepareforwigs
+  - name: Copy prepare-for-wigs.sh file Script to remote machine
+    copy:
+      src: templates/prepare-for-wigs.sh
+      dest: /home/cloudxmigration/
+      owner: cloudxmigration
+      #group: ec2-user
+      mode: '0755'
+
+  - name: Run the script prepare-for-wigs.sh
+    become: true
+    command: sh /home/cloudxmigration/prepare-for-wigs.sh
+    register: op
+
+  - name: Print the result
+    debug: var=op.stdout_lines
+
+  - name: Create the crypto policy directories required for RHEL 8 Wigs
+    file:
+      path: /etc/crypto-policies/policies/modules
+      state: directory
+      owner: root
+      group: root
+      recurse: yes
+
+  - name: Validate the sudoers file before saving
+    lineinfile:
+      path: /etc/sudoers
+      state: present
+      regexp: '^Defaults    requiretty'
+      line: '#Defaults    requiretty'
+      validate: '/usr/sbin/visudo -cf %s'
+  - name: Remount "/tmp" with exec
+    shell: sudo mount /tmp -o remount,exec

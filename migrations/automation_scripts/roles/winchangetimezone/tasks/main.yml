@@ -1,0 +1,16 @@
+---
+# tasks file for step one
+
+
+- name: Set timezone to 'Coordinated Universal Time' (UTC)
+  win_timezone:
+    timezone: UTC
+  ignore_errors: true
+
+- name: get current time
+  win_shell: Get-Date
+  register: time_now
+
+- name: Display Current Time
+  debug: 
+    var: time_now.stdout

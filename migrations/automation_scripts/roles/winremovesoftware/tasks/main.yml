@@ -1,0 +1,88 @@
+---
+# tasks file for step one
+
+- name: Remove Trend Micro
+  win_shell: |
+    $env:SEE_MASK_NOZONECHECKS = 1
+    $remove = Get-ChildItem -Path HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall, HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall  |
+    Get-ItemProperty |
+        Where-Object {$_.DisplayName -match "Trend Micro" } |
+            Select-Object -Property DisplayName, UninstallString
+    ForEach ($ver in $remove) {
+       If ($ver.UninstallString) {
+           echo $ver.UninstallString
+           $uninst = $ver.UninstallString
+           echo $uninst
+           & cmd /c $uninst /quiet /norestart
+       }
+    }
+  ignore_errors: true
+
+
+#- name: Remove PV Drivers
+#  win_shell: |
+#    $env:SEE_MASK_NOZONECHECKS = 1
+#    $remove = Get-ChildItem -Path HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall, HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall  |
+#    Get-ItemProperty |
+#        Where-Object {$_.DisplayName -match "AWS PV Driver" } |
+#            Select-Object -Property DisplayName, UninstallString
+#    ForEach ($ver in $remove) {
+#       If ($ver.UninstallString) {
+#           echo $ver.UninstallString
+#           $uninst = $ver.UninstallString
+#           echo $uninst
+#           & cmd /c $uninst /quiet /norestart
+#       }
+#    }
+#  ignore_errors: true
+
+
+
+- name: Remove Cloudamize
+  win_shell: |
+    $env:SEE_MASK_NOZONECHECKS = 1
+    $remove = Get-ChildItem -Path HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall, HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall  |
+    Get-ItemProperty |
+        Where-Object {$_.DisplayName -match "Cloudamize" } |
+            Select-Object -Property DisplayName, UninstallString
+    ForEach ($ver in $remove) {
+       If ($ver.UninstallString) {
+           echo $ver.UninstallString
+           $uninst = $ver.UninstallString
+           echo $uninst
+           & cmd /c $uninst /quiet /norestart
+       }
+    }
+  ignore_errors: true
+
+
+
+
+
+- name: Remove PV Drivers
+  win_shell: |
+     $b = Get-WmiObject -Class win32_product -Filter "Name like 'AWS PV Drivers'"
+     $b.uninstall()
+  become: yes
+  become_user: CloudXMigration
+  register: repo_code2
+  ignore_errors: true
+
+#- name: Remove Veritas NetBackup
+#  win_shell: |
+#     $c = Get-WmiObject -Class win32_product -Filter "Name like 'Veritas Net%'"
+#     $c.uninstall()
+#  become: yes
+#  become_user: CloudXMigration
+#  register: repo_code3
+#  ignore_errors: true
+
+#- name: Remove Cloudamize Agent
+#  win_shell: |
+#     $d = Get-WmiObject -Class win32_product -Filter "Name like 'Cloudamize%'"
+#     $d.uninstall()
+#  become: yes
+#  become_user: CloudXMigration
+#  register: repo_code2
+#  ignore_errors: true
+

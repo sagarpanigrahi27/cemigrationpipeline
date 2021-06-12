@@ -1,0 +1,7 @@
+---
+# tasks file for step one
+
+- name: Add amp.au suffixes
+  win_command: wmic nicconfig call SetDNSSuffixSearchOrder (AU.AMP.LOCAL,AMP.COM.AU,AMPAWS.COM.AU)
+  ignore_errors: true 
+

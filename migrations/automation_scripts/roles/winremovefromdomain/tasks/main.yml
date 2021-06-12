@@ -1,0 +1,41 @@
+---
+# tasks file for step one
+
+- name: Unjoin , Change Name , Deny TSC and disable firewall
+  win_shell: |
+     netdom remove $env:computername /force
+     Add-Computer -WorkGroupName 'WORKGROUP'
+#     Rename-Computer -NewName (($env:computername).Substring(0, [Math]::Min(($env:computername).length, 12))+'WIG')
+  become: yes
+  become_user: CloudXMigration
+  register: repo_code
+  ignore_errors: true
+
+- name: Re-enable the DDNS
+  win_shell: |
+      Get-NetAdapter | Set-DNSClient –RegisterThisConnectionsAddress $False
+      (Get-NetAdapter | Get-DNSClient).RegisterThisConnectionsAddress
+  register: op
+  ignore_errors: yes
+
+- debug:
+    var: op.stdout
+
+
+- name: Disable TSCDeny rule
+  win_shell: Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server'-name "fDenyTSConnections" -Value 0
+  ignore_errors: true
+  become: yes
+  become_user: CloudXMigration
+
+- name: Disable RDP Firewall
+  win_shell: Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
+  ignore_errors: true
+  become: yes
+  become_user: CloudXMigration
+
+
+- name: Rebooting the server 
+  win_reboot:
+    reboot_timeout: 1800  
+  when: repo_code.changed | bool

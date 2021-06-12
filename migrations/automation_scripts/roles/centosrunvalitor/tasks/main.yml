@@ -1,0 +1,37 @@
+---
+# tasks file for runvalidator
+  - name: Run the validator
+    shell: |
+      python3 /home/cloudxmigration/Linux_PreWig_Validator/control_script.py --verbose
+    register: ps
+    ignore_errors: yes
+
+  - name: Print the result
+    debug: var=ps.stdout_lines
+
+  - name: Check presence of .aws folder
+    shell: |
+      ls -a /root/ | grep .aws &> output.txt
+      cat output.txt
+      #rm -f output.txt
+    register: fp
+    ignore_errors: yes
+
+  - debug:
+      var: fp.stdout_lines
+
+
+  - name: check aws cli version
+    shell: |
+      aws --version >> op.txt 2>&1
+      aws --version >> op.txt 2>&1
+      cat op.txt
+      #rm -f op.txt
+    ignore_errors: yes
+    register: ao
+
+  - shell: |
+      rm -f output.txt &> /dev/null
+      rm -f op.txt &> /dev/null
+  - debug:
+      var: ao.stdout_lines

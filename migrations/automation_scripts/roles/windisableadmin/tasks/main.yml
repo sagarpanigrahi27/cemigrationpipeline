@@ -1,0 +1,5 @@
+---
+# tasks file for disableadmin
+- name: Disable Administrator ID
+  win_command: net user administrator /active:no
+  ignore_errors: true

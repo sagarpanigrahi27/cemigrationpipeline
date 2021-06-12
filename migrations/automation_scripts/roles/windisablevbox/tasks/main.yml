@@ -1,0 +1,7 @@
+---
+# tasks file for step one
+
+- name: Disable Virtual Box adapater if present
+  win_command: netsh interface set interface "VirtualBox Host-Only Network" admin=disable
+  ignore_errors: true 
+
