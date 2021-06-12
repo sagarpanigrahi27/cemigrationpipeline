@@ -1,0 +1,684 @@
+<?xml version='1.1' encoding='UTF-8'?>
+<flow-definition plugin="workflow-job@2.41">
+  <actions>
+    <org.jenkinsci.plugins.pipeline.modeldefinition.actions.DeclarativeJobAction plugin="pipeline-model-definition@1.8.5"/>
+    <org.jenkinsci.plugins.pipeline.modeldefinition.actions.DeclarativeJobPropertyTrackerAction plugin="pipeline-model-definition@1.8.5">
+      <jobProperties/>
+      <triggers/>
+      <parameters/>
+      <options/>
+    </org.jenkinsci.plugins.pipeline.modeldefinition.actions.DeclarativeJobPropertyTrackerAction>
+  </actions>
+  <description></description>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <com.sonyericsson.rebuild.RebuildSettings plugin="rebuild@1.32">
+      <autoRebuild>false</autoRebuild>
+      <rebuildDisabled>false</rebuildDisabled>
+    </com.sonyericsson.rebuild.RebuildSettings>
+    <hudson.model.ParametersDefinitionProperty>
+      <parameterDefinitions>
+        <hudson.model.StringParameterDefinition>
+          <name>CEProjectName</name>
+          <defaultValue>Migration-Pipeline-Demo</defaultValue>
+          <trim>false</trim>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.ChoiceParameterDefinition>
+          <name>TARGET_AWS_REGION</name>
+          <choices class="java.util.Arrays$ArrayList">
+            <a class="string-array">
+              <string>us-east-1</string>
+              <string>us-east-2</string>
+              <string>us-west-1</string>
+              <string>us-west-2</string>
+              <string>af-south-1</string>
+              <string>ap-east-1</string>
+              <string>ap-south-1</string>
+              <string>ap-northeast-3</string>
+              <string>ap-northeast-2</string>
+              <string>ap-southeast-1</string>
+              <string>ap-southeast-2</string>
+              <string>ap-northeast-1</string>
+              <string>ca-central-1</string>
+              <string>cn-north-1</string>
+              <string>cn-northwest-1</string>
+              <string>eu-central-1</string>
+              <string>eu-west-1</string>
+              <string>eu-west-2</string>
+              <string>eu-south-1</string>
+              <string>eu-west-3</string>
+              <string>eu-north-1</string>
+              <string>me-south-1</string>
+              <string>sa-east-1</string>
+              <string>us-gov-east-1</string>
+              <string>us-gov-west-1</string>
+            </a>
+          </choices>
+        </hudson.model.ChoiceParameterDefinition>
+        <hudson.model.TextParameterDefinition>
+          <name>SERVERNAMES</name>
+          <trim>false</trim>
+        </hudson.model.TextParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>CEAPIToken</name>
+          <trim>false</trim>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.FileParameterDefinition>
+          <name>variables.yaml</name>
+        </hudson.model.FileParameterDefinition>
+        <hudson.model.ChoiceParameterDefinition>
+          <name>filename</name>
+          <description>Filename that stores the list of servers within the job. </description>
+          <choices class="java.util.Arrays$ArrayList">
+            <a class="string-array">
+              <string>serverlist</string>
+            </a>
+          </choices>
+        </hudson.model.ChoiceParameterDefinition>
+        <hudson.model.ChoiceParameterDefinition>
+          <name>platform</name>
+          <choices class="java.util.Arrays$ArrayList">
+            <a class="string-array">
+              <string>windows</string>
+              <string>linux</string>
+            </a>
+          </choices>
+        </hudson.model.ChoiceParameterDefinition>
+        <hudson.model.ChoiceParameterDefinition>
+          <name>ACTIONS</name>
+          <choices class="java.util.Arrays$ArrayList">
+            <a class="string-array">
+              <string>ALL-STEPS</string>
+              <string>CE-CUTOVER</string>
+              <string>CHECK-EC2</string>
+              <string>PRE-WIG</string>
+              <string>CREATE-AMI</string>
+              <string>WIGRFC</string>
+            </a>
+          </choices>
+        </hudson.model.ChoiceParameterDefinition>
+        <hudson.model.ChoiceParameterDefinition>
+          <name>tasks</name>
+          <choices class="java.util.Arrays$ArrayList">
+            <a class="string-array">
+              <string>ALL</string>
+              <string>winrunvalidator</string>
+              <string>runvalidator</string>
+            </a>
+          </choices>
+        </hudson.model.ChoiceParameterDefinition>
+        <hudson.model.ChoiceParameterDefinition>
+          <name>AZURE_TENANT_ID</name>
+          <choices class="java.util.Arrays$ArrayList">
+            <a class="string-array">
+              <string>abcd-xyz-hsgdhsgd-sdhsgd</string>
+            </a>
+          </choices>
+        </hudson.model.ChoiceParameterDefinition>
+        <hudson.model.ChoiceParameterDefinition>
+          <name>AZURE_APP_ID_URI</name>
+          <choices class="java.util.Arrays$ArrayList">
+            <a class="string-array">
+              <string>https://siginin.aws.amazon.com/saml#1111</string>
+            </a>
+          </choices>
+        </hudson.model.ChoiceParameterDefinition>
+        <hudson.model.ChoiceParameterDefinition>
+          <name>AZURE_DEFAULT_ROLE_ARN</name>
+          <choices class="java.util.Arrays$ArrayList">
+            <a class="string-array">
+              <string>arn:aws:iam::XXXXXXXXX:role/RoleName</string>
+            </a>
+          </choices>
+        </hudson.model.ChoiceParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>AZURE_EMAIL_ID</name>
+          <trim>false</trim>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.PasswordParameterDefinition>
+          <name>AZURE_PASSWORD</name>
+          <description>Enter your Azure Password</description>
+          <defaultValue>{AQAAABAAAAAQc0pG3EIeqotfUzRLVtq9udxMzqtps5QZSScgt/8GzcM=}</defaultValue>
+        </hudson.model.PasswordParameterDefinition>
+        <hudson.model.PasswordParameterDefinition>
+          <name>AZURE_PASSWORD2</name>
+          <description>Re-enter your Azure Password</description>
+          <defaultValue>{AQAAABAAAAAQ6qN4MMlnuYYI9ikLMG8Sf5iRzBILu0+3For+AoBBYWE=}</defaultValue>
+        </hudson.model.PasswordParameterDefinition>
+        <hudson.model.ChoiceParameterDefinition>
+          <name>AZURE_DEFAULT_DURATION_HOURS</name>
+          <choices class="java.util.Arrays$ArrayList">
+            <a class="string-array">
+              <string>1</string>
+            </a>
+          </choices>
+        </hudson.model.ChoiceParameterDefinition>
+        <hudson.model.ChoiceParameterDefinition>
+          <name>wig_vpc</name>
+          <description>Target VPC for ingested workload to run in AMS</description>
+          <choices class="java.util.Arrays$ArrayList">
+            <a class="string-array">
+              <string>vpc-05evcksdhgsd</string>
+            </a>
+          </choices>
+        </hudson.model.ChoiceParameterDefinition>
+        <hudson.model.ChoiceParameterDefinition>
+          <name>wig_subnet</name>
+          <description>Target Subnets for ingested workloads to run</description>
+          <choices class="java.util.Arrays$ArrayList">
+            <a class="string-array">
+              <string>subnet-00ytyeteyts</string>
+              <string>subnet-12dsydubrs</string>
+            </a>
+          </choices>
+        </hudson.model.ChoiceParameterDefinition>
+      </parameterDefinitions>
+    </hudson.model.ParametersDefinitionProperty>
+  </properties>
+  <definition class="org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition" plugin="workflow-cps@2.92">
+    <script>library &quot;jenkinsci-unstashParam-library&quot;
+pipeline {
+    agent {label &apos;ansible&apos;}
+    
+    stages {
+        stage(&apos;Update Blueprint&apos;) {
+            when {
+                expression { params.ACTIONS == &apos;CE-CUTOVER&apos; || params.ACTIONS == &apos;ALL-STEPS&apos; }
+            }
+            steps {
+                sh &quot;mkdir ${BUILD_NUMBER}&quot;
+                
+                
+                    
+                
+                script {
+                def myarr = &quot;${SERVERNAMES}&quot;.split(&apos;\n&apos;)
+                
+                def file_in_workspace = unstashParam &quot;variables.yaml&quot;
+                sh &quot;mv &apos;${file_in_workspace}&apos; ${BUILD_NUMBER}/variables.yaml&quot;
+                
+                echo &apos;Hello World&apos;
+                
+                sh &quot;&quot;&quot;
+    
+    
+                
+                set +x
+                
+                sudo cp /var/lib/docker/volumes/jenkins_home/_data/migrationpipeline/ce_login.py ${BUILD_NUMBER}/
+                
+                &quot;&quot;&quot;
+                dir(&quot;${env.BUILD_NUMBER}&quot;) {
+                sh &quot;pwd&quot;
+                myarr.each{ server -&gt;
+                
+                    sh &quot;&quot;&quot;
+                    set +x
+                    echo ${server}
+                    
+	                sudo python3 ce_login.py ${server} ${CEAPIToken} ${CEProjectName}
+
+                    #done
+
+                    
+                    &quot;&quot;&quot; 
+                }
+                }
+                
+            }
+            }
+        }
+        stage(&apos;Validate platforms&apos;)
+        {
+            when {
+                expression { params.ACTIONS == &apos;CE-CUTOVER&apos; || params.ACTIONS == &apos;ALL-STEPS&apos; }
+            }
+            steps {
+                
+              script {
+            def platform_check = &apos;&apos;
+            
+            sh &quot;&quot;&quot;
+            sudo cp /var/lib/docker/volumes/jenkins_home/_data/migrationpipeline/validate_platform.py ${BUILD_NUMBER}/
+            &quot;&quot;&quot;
+            dir(&quot;${env.BUILD_NUMBER}&quot;) {
+            
+                platform_check=sh (returnStdout: true, script: &quot;python3 validate_platform.py&quot;)
+                
+                
+            if ( platform_check != &apos;&apos; ){
+                println &quot;The list has a mix of Windows and Linux Servers. Please submit only one type of servers per job.&quot;
+                currentBuild.result = &apos;ABORTED&apos;
+                error(&apos;Stopping early…&apos;)
+            }
+            }
+              }
+              
+            }
+            
+        }        
+        stage(&apos;Launch Instances&apos;){
+            when {
+                expression { params.ACTIONS == &apos;CE-CUTOVER&apos; || params.ACTIONS == &apos;ALL-STEPS&apos; }
+            }
+            steps {
+            dir(&quot;${env.BUILD_NUMBER}&quot;) {
+                sh &quot;&quot;&quot;
+                set +x
+                sudo cp /var/lib/docker/volumes/jenkins_home/_data/migrationpipeline/ce_launch.py .
+            
+                sudo python3 ce_launch.py
+            &quot;&quot;&quot;
+            }    
+            
+            }
+        }
+        stage(&apos;CloudEndure Job Running&apos;){
+            when {
+                expression { params.ACTIONS == &apos;CE-CUTOVER&apos; || params.ACTIONS == &apos;ALL-STEPS&apos; }
+            }
+            steps {
+            dir(&quot;${env.BUILD_NUMBER}&quot;) {
+            sh &quot;&quot;&quot;
+            sudo cp /var/lib/docker/volumes/jenkins_home/_data/migrationpipeline/ce_checkjob.py .
+            
+            sudo python3 ce_checkjob.py
+            &quot;&quot;&quot;
+            }
+            }
+        }
+        stage(&apos;Check EC2 Status&apos;){
+            when {
+                expression { params.ACTIONS == &apos;CHECK-EC2&apos; || params.ACTIONS == &apos;CE-CUTOVER&apos; || params.ACTIONS == &apos;ALL-STEPS&apos; }
+            }
+            steps {
+                
+                sh &quot;&quot;&quot;
+                set +x
+                if [ ! -d ${BUILD_NUMBER} ]
+                then
+                    mkdir ${BUILD_NUMBER}
+                fi
+                sudo cp /opt/migrations/scripts/get_instances.sh ${BUILD_NUMBER}/
+                sudo chmod 755 ${BUILD_NUMBER}/get_instances.sh
+                &quot;&quot;&quot;
+                script {
+                def myarr2 = &quot;${SERVERNAMES}&quot;.split(&apos;\n&apos;)
+                     sh &quot;&quot;&quot;
+                        set +x
+                        if [ -f ${BUILD_NUMBER}/${filename} ]; then
+                            rm -rf ${BUILD_NUMBER}/${filename}
+                        fi
+                        
+                    &quot;&quot;&quot;
+                    myarr2.each{ server -&gt;
+                    
+                    sh &quot;&quot;&quot;
+                    set +x
+                    
+                    echo ${server}
+                    echo ${server} &gt;&gt; ${BUILD_NUMBER}/${filename}
+                    
+                    &quot;&quot;&quot;
+                    }
+                    
+                }
+                dir(&quot;${env.BUILD_NUMBER}&quot;) {
+                    sh &quot;cat ${filename}&quot;
+                    withCredentials([[$class: &apos;AmazonWebServicesCredentialsBinding&apos;, accessKeyVariable: &apos;AWS_ACCESS_KEY_ID&apos;, credentialsId: &apos;Staging_CE&apos;, secretKeyVariable: &apos;AWS_SECRET_ACCESS_KEY&apos;]]) {
+                        sh &quot;&quot;&quot;
+                        set +x
+                        export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
+                        export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
+                        export AWS_DEFAULT_REGION=&apos;ap-southeast-2&apos;
+                        ./get_instances.sh ${filename} ${platform} ${TARGET_AWS_REGION}
+                        &quot;&quot;&quot;
+                    //}
+                    
+                        script {
+                            def myarr = &quot;${SERVERNAMES}&quot;.split(&apos;\n&apos;)
+                            countofserver = myarr.size()
+                            int countofrunning = 0
+                            println countofserver
+                            println countofrunning
+                                while (countofrunning != countofserver){
+                                    countofrunning = 0
+                                    myarr.each{ server -&gt;
+                                    def state = &apos;&apos;
+                                    def instance_status = &apos;&apos;
+                                    def system_status = &apos;&apos;
+                                    def instance = &apos;&apos;
+                                    def file =  readFile(&quot;${env.WORKSPACE}/${env.BUILD_NUMBER}/${filename}_instances&quot;)
+                                    def lines = file.readLines()
+                                        lines.each { String line -&gt;
+                                        
+                                        if (line.contains(&quot;${server}&quot;)){
+                                            instance = line.split(&quot;:&quot;)[1]
+                                            state = sh (returnStdout: true, script: &quot;aws ec2 describe-instances --instance-id ${instance} --region ${TARGET_AWS_REGION} | jq -r .Reservations[].Instances[].State.Name&quot;)
+                                            instance_status = sh (returnStdout: true, script: &quot;aws ec2 describe-instance-status --instance-id ${instance} --region ${TARGET_AWS_REGION} | jq -r .InstanceStatuses[].InstanceStatus.Details[].Status&quot;)
+                                            system_status = sh (returnStdout: true, script: &quot;aws ec2 describe-instance-status --instance-id ${instance} --region ${TARGET_AWS_REGION} | jq -r .InstanceStatuses[].SystemStatus.Details[].Status&quot;)
+                                        
+                                            println &quot;State of &quot;+server+&quot;is:&quot;+state
+                                            println &quot;instance status of &quot;+server+&quot;is:&quot;+instance_status
+                                            println &quot;system status of &quot;+server+&quot;is:&quot;+system_status
+                                            if (state.contains(&quot;running&quot;) &amp;&amp; instance_status.contains(&quot;passed&quot;) &amp;&amp; system_status.contains(&quot;passed&quot;)){
+                                                println server+&quot;is passed..&quot;
+                                                countofrunning = countofrunning + 1
+                                            }
+                                            println &quot;waiting...&quot;
+                                        }
+                                        
+                                        
+                                        }
+                                    
+                                    }
+                                    sh &quot;echo  &apos;Total ${countofrunning} started out of ${countofserver}...&apos;&quot;
+                                }
+                        }
+                }
+                }
+            }
+            
+            
+        
+        }
+        stage(&apos;Run Ansible-Prewig&apos;){
+            when {
+                expression { params.ACTIONS == &apos;PRE-WIG&apos; || params.ACTIONS == &apos;ALL-STEPS&apos; }
+            }
+            steps{
+                
+                
+                withCredentials([[$class: &apos;AmazonWebServicesCredentialsBinding&apos;, accessKeyVariable: &apos;AWS_ACCESS_KEY_ID&apos;, credentialsId: &apos;Staging_CE&apos;, secretKeyVariable: &apos;AWS_SECRET_ACCESS_KEY&apos;], string(credentialsId: &apos;ansible_pswd&apos;, variable: &apos;ansible_pswd&apos;)]) {
+                sh &quot;&quot;&quot;
+                set +x
+                if [ ! -d ${BUILD_NUMBER} ]
+                then
+                    mkdir ${BUILD_NUMBER}
+                fi
+                sudo cp /opt/migrations/scripts/stop_instances.sh ${BUILD_NUMBER}/
+                sudo cp /opt/migrations/scripts/start_instances.sh ${BUILD_NUMBER}/
+                sudo cp /opt/migrations/scripts/get_instances.sh ${BUILD_NUMBER}/
+                &quot;&quot;&quot;
+                script {
+                if ( params.ACTIONS == &apos;ALL-STEPS&apos; )
+                {
+                    
+                    sleep(420)
+                    
+                }
+                def myarr2 = &quot;${SERVERNAMES}&quot;.split(&apos;\n&apos;)
+                    sh &quot;&quot;&quot;
+                    if [ -f ${BUILD_NUMBER}/${filename} ]; then
+                        rm -rf ${BUILD_NUMBER}/${filename}
+                    fi
+                    &quot;&quot;&quot;
+                    
+                    
+                    myarr2.each{ server -&gt;
+                    
+                    sh &quot;&quot;&quot;
+                   
+                    echo ${server}
+                    echo ${server} &gt;&gt; ${BUILD_NUMBER}/${filename}
+                    
+                    &quot;&quot;&quot;
+                    }
+                    
+                    
+                }    
+            
+                script{
+                    dir(&quot;${env.BUILD_NUMBER}&quot;) {
+                        
+    
+                        sh &quot;&quot;&quot;
+                          set +x
+                          export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
+                          export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
+                          export AWS_DEFAULT_REGION=&apos;ap-southeast-2&apos;
+                          ./get_instances.sh ${filename} ${platform} ${TARGET_AWS_REGION}
+                          if [[ &quot;${platform}&quot; == &quot;linux&quot;  &amp;&amp; &quot;${tasks}&quot; == &quot;ALL&quot; ]]
+                          then
+                           ansible -i ${filename}_ansible ${filename} -m ping --extra-vars &quot;ansible_password=${ansible_pswd}&quot;
+                           ansible-playbook -i ${filename}_ansible -l ${filename} /opt/migrations/automation-scripts/playbook-linux-rhel-prewig.yaml --extra-vars &quot;ansible_password=${ansible_pswd}&quot;
+                          elif [[ &quot;${platform}&quot; == &quot;linux&quot; &amp;&amp; &quot;${tasks}&quot; == &quot;runvalidator&quot; ]]
+                          then
+                           ansible-playbook -i ${filename}_ansible -l ${filename} /opt/migrations/automation-scripts/playbook-linux-rhel-prewig.yaml --extra-vars &quot;ansible_password=${ansible_pswd}&quot; --tags ${tasks}
+                          elif [[ &quot;${platform}&quot; == &quot;windows&quot; &amp;&amp; &quot;${tasks}&quot; == &quot;ALL&quot; ]]
+                          then
+                           ansible -i ${filename}_ansible ${filename} -m win_ping --extra-vars &quot;ansible_password=${ansible_pswd}&quot;
+                           ansible-playbook -i ${filename}_ansible -l ${filename} /opt/migrations/automation-scripts/playbook-windows-prewig.yaml --extra-vars &quot;ansible_password=${ansible_pswd}&quot;
+                          elif [[ &quot;${platform}&quot; == &quot;windows&quot; &amp;&amp; &quot;${tasks}&quot; == &quot;winrunvalidator&quot; ]]
+                          then
+                           ansible-playbook -i ${filename}_ansible -l ${filename} /opt/migrations/automation-scripts/playbook-windows-prewig.yaml --extra-vars &quot;ansible_password=${ansible_pswd}&quot; --tags ${tasks}
+                          fi
+                        &quot;&quot;&quot;
+                    
+                    }
+                }
+             }
+            }
+        }
+        stage(&quot;Create Pre-ingestion AMI&quot;){
+            when {
+                expression { params.ACTIONS == &apos;CREATE-AMI&apos; || params.ACTIONS == &apos;ALL-STEPS&apos; }
+            }
+            steps{
+                withCredentials([[$class: &apos;AmazonWebServicesCredentialsBinding&apos;, accessKeyVariable: &apos;AWS_ACCESS_KEY_ID&apos;, credentialsId: &apos;Staging_CE&apos;, secretKeyVariable: &apos;AWS_SECRET_ACCESS_KEY&apos;]]) {
+                sh &quot;&quot;&quot;
+                set +x
+                if [ ! -d ${BUILD_NUMBER} ]
+                then
+                    mkdir ${BUILD_NUMBER}
+                fi
+                sudo cp /opt/migrations/scripts/stop_instances.sh ${BUILD_NUMBER}/
+                sudo cp /opt/migrations/scripts/start_instances.sh ${BUILD_NUMBER}/
+                sudo cp /opt/migrations/scripts/get_instances.sh ${BUILD_NUMBER}/
+                sudo cp -r /opt/migrations/scripts/amsrfc ${BUILD_NUMBER}/
+                sudo chown -R cloudxmigration:root ${BUILD_NUMBER}/amsrfc/
+                &quot;&quot;&quot;
+                script {
+                    if ( params.AMP_EMAIL_ID == &apos;&apos; || params.AMP_PASSWORD.getPlainText().isEmpty() ) { 
+                    currentBuild.result = &apos;ABORTED&apos;
+                    error(&apos;AMP_EMAIL_ID or AMP_PASSWORD is not provided..&apos;)
+                    }
+                    if ( params.AMP_PASSWORD.getPlainText() != params.AMP_PASSWORD2.getPlainText()){
+                    currentBuild.result = &apos;ABORTED&apos;
+                    error(&apos;Password and Re-entered Password do not match..&apos;)
+                        
+                    }
+                  
+                }
+                script {
+                def myarr2 = &quot;${SERVERNAMES}&quot;.split(&apos;\n&apos;)
+                    sh &quot;&quot;&quot;
+                        set +x
+                        if [ -f ${BUILD_NUMBER}/${filename} ]; then
+                            rm -rf ${BUILD_NUMBER}/${filename}
+                        fi
+                        
+                    &quot;&quot;&quot;
+                    myarr2.each{ server -&gt;
+                    
+                    sh &quot;&quot;&quot;
+                    
+                    echo ${server}
+                    echo ${server} &gt;&gt; ${BUILD_NUMBER}/${filename}
+                    
+                    &quot;&quot;&quot;
+                    }
+                    
+                }        
+                script{
+                   
+                   
+                    
+                    dir(&quot;${env.BUILD_NUMBER}&quot;) {
+                        sh &quot;&quot;&quot;
+                        set +x
+                        export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
+                        export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
+                        export AWS_DEFAULT_REGION=&apos;ap-southeast-2&apos;
+                        ./get_instances.sh ${filename} ${platform} ${TARGET_AWS_REGION}
+                        echo ${filename} &gt; temp
+                        echo &quot;1&quot; &gt;&gt; temp
+                        ./stop_instances.sh &lt; temp
+                        rm -f temp
+                        
+                        &quot;&quot;&quot;   
+                    }
+                    dir(&quot;${env.BUILD_NUMBER}/amsrfc/RFC_CREATE_SCRIPTS&quot;) {
+                        sh &quot;&quot;&quot;
+                        set +x
+                        sudo su
+                        export AZURE_TENANT_ID=${AZURE_TENANT_ID}
+                        export AZURE_APP_ID_URI=${AZURE_APP_ID_URI}
+                        export AZURE_DEFAULT_USERNAME=${AMP_EMAIL_ID}
+                        export AZURE_DEFAULT_PASSWORD=${AMP_PASSWORD}
+                        export AZURE_DEFAULT_ROLE_ARN=${AZURE_DEFAULT_ROLE_ARN}
+                        export AZURE_DEFAULT_DURATION_HOURS=${AZURE_DEFAULT_DURATION_HOURS}
+                        export https_proxy=http://c2proxy.ampaws.com.au:8080/
+                        sudo -E aws-azure-login --no-sandbox --no-prompt
+                        sudo ./create_AMIRFCv2.sh &apos;pre-ingestion&apos; ${filename}
+                        sudo ./check_AMSRFCv3.sh &apos;rfc_list.txt&apos;
+                        
+                        &quot;&quot;&quot;
+                
+                    }
+                }    
+            }
+
+            }
+
+
+        }
+        stage(&apos;Start Instances&apos;){
+            when {
+                expression { params.ACTIONS == &apos;CREATE-AMI&apos; || params.ACTIONS == &apos;ALL-STEPS&apos; }
+            }
+            steps{
+                withCredentials([[$class: &apos;AmazonWebServicesCredentialsBinding&apos;, accessKeyVariable: &apos;AWS_ACCESS_KEY_ID&apos;, credentialsId: &apos;Staging_CE&apos;, secretKeyVariable: &apos;AWS_SECRET_ACCESS_KEY&apos;]]) {
+                script {
+                sh &quot;&quot;&quot;
+                set +x
+                if [ ! -d ${BUILD_NUMBER} ]
+                then
+                    mkdir ${BUILD_NUMBER}
+                fi
+                sudo cp /opt/migrations/scripts/stop_instances.sh ${BUILD_NUMBER}/
+                sudo cp /opt/migrations/scripts/start_instances.sh ${BUILD_NUMBER}/
+                sudo cp /opt/migrations/scripts/get_instances.sh ${BUILD_NUMBER}/
+                
+                &quot;&quot;&quot;
+                dir(&quot;${env.BUILD_NUMBER}&quot;) {
+                        sh &quot;&quot;&quot;
+                        set +x
+                        export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
+                        export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
+                        export AWS_DEFAULT_REGION=&apos;ap-southeast-2&apos;
+                        echo ${filename} &gt; temp
+                        echo &quot;1&quot; &gt;&gt; temp
+                        ./start_instances.sh &lt; temp
+                        rm -f temp
+                        
+                        &quot;&quot;&quot;   
+                    }
+                }
+                
+                }
+
+            
+            }
+
+        }
+        stage(&apos;Raise WIG RFC&apos;){
+            when {
+                expression { params.ACTIONS == &apos;WIGRFC&apos; }
+            }
+            steps{
+                withCredentials([[$class: &apos;AmazonWebServicesCredentialsBinding&apos;, accessKeyVariable: &apos;AWS_ACCESS_KEY_ID&apos;, credentialsId: &apos;Staging_CE&apos;, secretKeyVariable: &apos;AWS_SECRET_ACCESS_KEY&apos;]]) {
+                    script {
+                    if ( params.AMP_EMAIL_ID == &apos;&apos; || params.AMP_PASSWORD.getPlainText().isEmpty() ) { 
+                    currentBuild.result = &apos;ABORTED&apos;
+                    error(&apos;AMP_EMAIL_ID or AMP_PASSWORD is not provided..&apos;)
+                    }
+                    if ( params.AMP_PASSWORD.getPlainText() != params.AMP_PASSWORD2.getPlainText()){
+                    currentBuild.result = &apos;ABORTED&apos;
+                    error(&apos;Password and Re-entered Password do not match..&apos;)
+                        
+                    }
+                  
+                }
+                    script {
+                        sh &quot;&quot;&quot;
+                        set +x
+                        if [ ! -d ${BUILD_NUMBER} ]
+                        then
+                            mkdir ${BUILD_NUMBER}
+                        fi
+                        yes | sudo cp /opt/migrations/scripts/get_instances.sh ${BUILD_NUMBER}/
+                        yes | sudo cp -r /opt/migrations/scripts/amsrfc ${BUILD_NUMBER}/
+                        sudo chown -R cloudxmigration:root ${BUILD_NUMBER}/amsrfc/
+                        &quot;&quot;&quot;
+                        def myarr2 = &quot;${SERVERNAMES}&quot;.split(&apos;\n&apos;)
+                        sh &quot;&quot;&quot;
+                        set -x
+                        if [ -f ${BUILD_NUMBER}/${filename} ]; then
+                            rm -rf ${BUILD_NUMBER}/${filename}
+                        fi
+                        
+                        &quot;&quot;&quot;
+                        myarr2.each{ server -&gt;
+                        
+                        sh &quot;&quot;&quot;
+                        
+                        echo ${server}
+                        echo ${server} &gt;&gt; ${BUILD_NUMBER}/${filename}
+                        
+                        &quot;&quot;&quot;
+                        }
+                    
+                    }  
+                    script {
+                        
+                        dir(&quot;${env.BUILD_NUMBER}&quot;) {
+                            sh &quot;&quot;&quot;
+                            set +x
+                            export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
+                            export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
+                            export AWS_DEFAULT_REGION=&apos;ap-southeast-2&apos;
+                            ./get_instances.sh ${filename} ${platform} ${TARGET_AWS_REGION}
+                            &quot;&quot;&quot;   
+                        }
+                        dir(&quot;${env.BUILD_NUMBER}/amsrfc/RFC_CREATE_SCRIPTS&quot;) {
+                            sh &quot;&quot;&quot;
+                            set +x
+                            sudo su
+                            export AZURE_TENANT_ID=${AZURE_TENANT_ID}
+                            export AZURE_APP_ID_URI=${AZURE_APP_ID_URI}
+                            export AZURE_DEFAULT_USERNAME=${AMP_EMAIL_ID}
+                            export AZURE_DEFAULT_PASSWORD=${AMP_PASSWORD}
+                            export AZURE_DEFAULT_ROLE_ARN=${AZURE_DEFAULT_ROLE_ARN}
+                            export AZURE_DEFAULT_DURATION_HOURS=${AZURE_DEFAULT_DURATION_HOURS}
+                            export https_proxy=http://c2proxy.ampaws.com.au:8080/
+                            sudo -E aws-azure-login --no-sandbox --no-prompt
+                            sudo ./create_WIGRFCv2.sh ${filename} ${wig_vpc} ${wig_subnet}
+                            &quot;&quot;&quot;
+                        }
+                    }
+                }
+
+            }
+        
+        }
+        
+        
+    }
+}
+</script>
+    <sandbox>true</sandbox>
+  </definition>
+  <triggers/>
+  <disabled>false</disabled>
+</flow-definition>
